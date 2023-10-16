@@ -44,12 +44,10 @@ func main() {
 			removeStudent()
 		case 4:
 			Printf("\n Enter your Contact number : ")
-			var contactNo string
 			var idNo int
-			Scanf("%s", &contactNo)
 			Printf("\n Enter your student ID : ")
 			Scanf("%d", &idNo)
-			Printf("\n Magic code is : \t %d \n", magicCode(contactNo, idNo))
+			Printf("\n Magic code is : \t %d \n", viewMagicCode(idNo))
 		default:
 			Printf("invalid option : %d \n", option)
 		}
@@ -158,4 +156,8 @@ func magicCode(phoneNumber string, studentID int) int {
 		}
 	}
 	return code % 1000
+}
+
+func viewMagicCode(studentID) {
+	Printf("/n/t Your magic code is : %d", studentList[studentID].magicCode)
 }
