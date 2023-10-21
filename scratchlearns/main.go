@@ -10,9 +10,18 @@ type person struct {
 	age  int    `json:"Age"`
 }
 
+type groupRegistry struct {
+	gName    string         `json:"groupName"`
+	gMembers map[int]person `json:"groupMembers"`
+	// gAdmin   map[int]person // will have to create it later
+}
+
+var gr = make(map[int]groupRegistry)
+var grp groupRegistry
+
 // ---------------------------------------------- Group Registery---------------
 
-func (grp groupRegistry) addPerson() {
+func (grp *groupRegistry) addMember() {
 	var groupId int
 	fmt.Printf("Enter the group id : ")
 	fmt.Scanf("%d", &groupId)
@@ -27,22 +36,33 @@ func (grp groupRegistry) addPerson() {
 		fmt.Printf("\n\t Enter your age : ")
 		fmt.Scanf("%d", &ss.age)
 		fmt.Printf("\t %s of age %d is added to %s with id %d \n", ss.name, ss.age, s.gName, mId)
+		test, _ := gr[groupId].gMembers[mId]
+		fmt.Printf("\n\n The updated data is : \t%v", test)
+	} else {
+		fmt.Println("The group ID you entered doesn't exist")
+	}
+}
+
+func (grp groupRegistry) viewMembers() {
+	var groupId int
+	fmt.Printf("Enter the group id : ")
+	fmt.Scanf("%d", &groupId)
+	s, ok := gr[groupId]
+	if ok {
+		println("--------- List of members is given below ------------ ")
+		for mId := 0; mId <= len(s.gMembers); mId++ {
+			ss, _ := s.gMembers[mId]
+			fmt.Printf("\n ID : %s", mId)
+			fmt.Printf("\n\t Name : %s", ss.name)
+			fmt.Printf("\n\t Age : %d", ss.age)
+		}
+		println("-------------------End of List ------------------- ")
 	} else {
 		fmt.Println("The group ID you entered doesn't exist")
 	}
 }
 
 // ---------------------------------------------- Group Registery---------------
-
-type groupRegistry struct {
-	gName    string         `json:"groupName"`
-	gMembers map[int]person `json:"groupMembers"`
-	// gAdmin   map[int]person // will have to create it later
-}
-
-var gr = make(map[int]groupRegistry)
-
-var grp groupRegistry
 
 func (grp groupRegistry) createGroup() {
 	var gId int
@@ -61,8 +81,7 @@ func (grp groupRegistry) viewGroup() {
 	fmt.Scanf("%d", &grpId)
 	s, ok := gr[grpId]
 	if ok {
-		fmt.Printf("The %s group found", s.gName)
-		fmt.Printf("\n\n\t %v", s.gMembers)
+		fmt.Printf("The %s group found with %d members", s.gName, len(s.gMembers))
 	} else {
 		fmt.Println("The group ID you entered doesn't exist")
 	}
@@ -101,12 +120,13 @@ func main() {
 		fmt.Scanf("%d", &option)
 		switch option {
 		case 1:
-			grp.addPerson()
+			grp.addMember()
+		case 2:
+			grp.viewMembers()
 		case 3:
 			grp.createGroup()
 		case 4:
 			grp.viewGroup()
-
 		case 20:
 			grp.saveJson()
 		case 0:
