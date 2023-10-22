@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 )
 
 type Person struct {
@@ -10,9 +11,25 @@ type Person struct {
 	Age  int    `json:"Age"`
 }
 
+type GroupRegistry struct {
+	GName    string         `json:"groupName"`
+	GMembers map[int]Person `json:"groupMembers"`
+	// gAdmin   map[int]person // will have to create it later
+}
+
+var Prsn Person
+
+var prsns map[int]Person
+
+var Grp GroupRegistry
+
+var grps map[int]GroupRegistry
+
+var Gr = make(map[int]GroupRegistry)
+
 // ---------------------------------------------- Group Registery---------------
 
-func (grp GroupRegistry) addPerson() {
+func (grp *GroupRegistry) addPerson() {
 	var groupId int
 	fmt.Printf("Enter the group id : ")
 	fmt.Scanf("%d", &groupId)
@@ -23,10 +40,17 @@ func (grp GroupRegistry) addPerson() {
 		fmt.Printf("\n\n\t\t%v -\tlength : %v", s.GMembers, mId)
 		ss, _ := s.GMembers[mId]
 		fmt.Printf("\n\t Enter your Name : ")
-		fmt.Scanf("%s", &ss.Name)
+		fmt.Scanf("%s", &Prsn.Name)
 		fmt.Printf("\n\t Enter your age : ")
-		fmt.Scanf("%d", &ss.Age)
-		fmt.Printf("\t %s of age %d is added to %s with id %d \n", ss.Name, ss.Age, s.GName, mId)
+		fmt.Scanf("%d", &Prsn.Age)
+		fmt.Printf("\t %s of age %d is added to %s with id %d \n", Prsn.Name, Prsn.Age, s.GName, mId)
+		fmt.Println("Type of Gr[groupId].GMembers[mId] is ", reflect.TypeOf(Gr[groupId].GMembers[mId]))
+		fmt.Printf("Type of Gr[groupId].GMembers[mId] has value %v \n ", Gr[groupId].GMembers[mId])
+		fmt.Println("ss is ", reflect.TypeOf(ss))
+		fmt.Printf("ss has value %v \n", ss)
+		fmt.Println("s is ", reflect.TypeOf(s))
+		fmt.Printf("s has value %v \n", s)
+		Gr[groupId].GMembers[mId] = Prsn
 	} else {
 		fmt.Println("The group ID you entered doesn't exist")
 	}
@@ -34,28 +58,17 @@ func (grp GroupRegistry) addPerson() {
 
 // ---------------------------------------------- Group Registery---------------
 
-type GroupRegistry struct {
-	GName    string         `json:"groupName"`
-	GMembers map[int]Person `json:"groupMembers"`
-	// gAdmin   map[int]person // will have to create it later
-}
-
-var Gr = make(map[int]GroupRegistry)
-
-var grp GroupRegistry
-
-func (grp GroupRegistry) createGroup() {
+func (Grp *GroupRegistry) createGroup() {
 	var gId int
 	gId = len(Gr)
 	fmt.Printf("\n\nEnter the new group name : ")
-	fmt.Scanf("%s", &grp.GName)
+	fmt.Scanf("%s", &Grp.GName)
 	gId += 1
-	Gr[gId] = GroupRegistry{GName: grp.GName}
-	fmt.Printf("\n\n\t New group %s is registered with group id %d \n\n", grp.GName, gId)
+	fmt.Printf("\n\n\t New group %s is registered with group id %d \n\n", Grp.GName, gId)
 	fmt.Printf("\n\n\n\t %v", Gr)
 }
 
-func (grp GroupRegistry) viewGroup() {
+func (Grp *GroupRegistry) viewGroup() {
 	var grpId int
 	fmt.Printf("\n\n Enter your group id : ")
 	fmt.Scanf("%d", &grpId)
@@ -70,10 +83,14 @@ func (grp GroupRegistry) viewGroup() {
 
 // ---------------------------------------------- Json codes ---------------
 
-func (grp GroupRegistry) saveJson() {
-	fmt.Printf("\n\n\n\t %v", Gr)
-	mapB, _ := json.Marshal(Gr)
-	fmt.Println(string(mapB))
+func (Grp *GroupRegistry) saveJson() {
+	fmt.Printf("\n\n\n\t %v \n", Gr)
+	mapB, err := json.Marshal(Gr)
+	if err != nil {
+		fmt.Printf("Error: %s", err.Error())
+	} else {
+		fmt.Println(string(mapB))
+	}
 
 	fmt.Printf("\n\n The below mentioned entiries are to be written :  \n\t %v ", Gr)
 }
@@ -87,12 +104,12 @@ func main() {
 		fmt.Printf(`
 		Action No -- Option detail
 		1 ---------- Add a member to group
-		2 ---------- View members in group
+		2 ---------- !View members in group
 		3 ---------- Add new group
 		4 ---------- View group details
-		10 --------- Get the Magic code
-		15 --------- Delete a member from the group
-		16 --------- Delete the group
+		10 --------- !Get the Magic code
+		15 --------- !Delete a member from the group
+		16 --------- !Delete the group
 		20 --------- Save as json
 		0 ---------- Exit from the function
 
@@ -101,14 +118,14 @@ func main() {
 		fmt.Scanf("%d", &option)
 		switch option {
 		case 1:
-			grp.addPerson()
+			Grp.addPerson()
 		case 3:
-			grp.createGroup()
+			Grp.createGroup()
 		case 4:
-			grp.viewGroup()
+			Grp.viewGroup()
 
 		case 20:
-			grp.saveJson()
+			Grp.saveJson()
 		case 0:
 			println("Happy to see you later")
 			return
