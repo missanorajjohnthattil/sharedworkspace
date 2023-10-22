@@ -27,6 +27,9 @@ var Grps = make(map[int]Group)
 var Rgstrs = make(map[int]Registery)
 
 func main() {
+
+	// Map of maps initial value
+
 	prsns[1] = Person{Pid: 1, Name: "Missan"}
 	prsns[2] = Person{Pid: 2, Name: "Midhun"}
 	prsns[3] = Person{Pid: 3, Name: "Reema"}
@@ -34,9 +37,13 @@ func main() {
 	Grps[2] = Group{Gid: 2, Groups: prsns}
 	Rgstrs[1] = Registery{Rid: 1, RGroup: Grps}
 
+	// Work area for the Maps
+
 	Grps[1].Groups[3] = Person{Pid: 3, Name: "Johnson"}
 
 	fmt.Printf("\n\t\t Grps[1].Groups[2]  \t : %v \n", Grps[1].Groups[2])
+
+	// View the Map of maps in detail
 
 	fmt.Printf(" Rgstrs : \t %v \n ", Grps)
 	fmt.Printf(" \t Length : \t %v \n ", len(Grps))
