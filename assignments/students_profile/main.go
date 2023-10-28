@@ -179,7 +179,6 @@ func viewMagicCode() {
 
 func getstudentGroup() (Rid int, Gid int, Pid int) {
 	var checkFlag bool
-
 	for {
 		fmt.Printf("\n\nEnter your register ID : \t")
 		Rid = readInt()
