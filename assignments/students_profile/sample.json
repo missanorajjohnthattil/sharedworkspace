@@ -1,0 +1,34 @@
+{
+ "1": {
+  "RegisterID": 1,
+  "RegisterName": "BGLRregister",
+  "groupRegister": {
+   "1": {
+    "GroupID": 1,
+    "GroupName": "Student",
+    "Group": {
+     "1": {
+      "MemberID": 1,
+      "MemberName": "John",
+      "MemberAge": 24,
+      "PhoneNo": "8846756431",
+      "MagicCode": 0
+     }
+    }
+   },
+   "2": {
+    "GroupID": 1,
+    "GroupName": "Teacher",
+    "Group": {
+     "1": {
+      "MemberID": 1,
+      "MemberName": "Krishna",
+      "MemberAge": 27,
+      "PhoneNo": "8046759631",
+      "MagicCode": 0
+     }
+    }
+   }
+  }
+ }
+}

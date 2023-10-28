@@ -1,0 +1,30 @@
+{
+ "1": {
+  "RegisterID": 1,
+  "RegisterName": "BGLRregister",
+  "groupRegister": {
+   "1": {
+    "GroupID": 1,
+    "GroupName": "Student",
+    "Group": {
+     "1": {
+      "MemberID": 1,
+      "MemberName": "John",
+      "MemberAge": 24
+     }
+    }
+   },
+   "2": {
+    "GroupID": 1,
+    "GroupName": "Teacher",
+    "Group": {
+     "1": {
+      "MemberID": 1,
+      "MemberName": "Krishna",
+      "MemberAge": 27
+     }
+    }
+   }
+  }
+ }
+}

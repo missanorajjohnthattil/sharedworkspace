@@ -1,0 +1,80 @@
+{
+ "1": {
+  "personName": 1,
+  "groupRegister": {
+   "1": {
+    "GroupID": 1,
+    "Group": {
+     "1": {
+      "MemberID": 1,
+      "MemberName": "Missan"
+     },
+     "2": {
+      "MemberID": 2,
+      "MemberName": "Midhun"
+     },
+     "3": {
+      "MemberID": 1,
+      "MemberName": "Johnson"
+     }
+    }
+   },
+   "2": {
+    "GroupID": 2,
+    "Group": {
+     "1": {
+      "MemberID": 1,
+      "MemberName": "Rosemol"
+     },
+     "2": {
+      "MemberID": 2,
+      "MemberName": "Anagha"
+     },
+     "3": {
+      "MemberID": 1,
+      "MemberName": "john"
+     }
+    }
+   }
+  }
+ },
+ "2": {
+    "personName": 1,
+    "groupRegister": {
+     "1": {
+      "GroupID": 1,
+      "Group": {
+       "1": {
+        "MemberID": 1,
+        "MemberName": "Delfred"
+       },
+       "2": {
+        "MemberID": 2,
+        "MemberName": "Johnny"
+       },
+       "3": {
+        "MemberID": 1,
+        "MemberName": "Markwils"
+       }
+      }
+     },
+     "2": {
+      "GroupID": 2,
+      "Group": {
+       "1": {
+        "MemberID": 1,
+        "MemberName": "Destero"
+       },
+       "2": {
+        "MemberID": 2,
+        "MemberName": "Natayal"
+       },
+       "3": {
+        "MemberID": 1,
+        "MemberName": "Gilborn"
+       }
+      }
+     }
+    }
+   }
+}
