@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/gocarina/gocsv"
 )
 
-type ArrayValue struct {
+type carDetail struct {
 	Name         string `csv:"name"`
 	Mpg          int    `csv:"mpg"`
 	Cylinders    int    `csv:"cylinders"`
@@ -22,80 +21,89 @@ type ArrayValue struct {
 	Origin       string `csv:"origin"`
 }
 
+var wg sync.WaitGroup
+var largestMutex sync.Mutex
 var largest int
 var name string
-var wg sync.WaitGroup
-var wrkrLmt int
 
 func main() {
 	fmt.Println("Work Pool menu ")
-	readFile("automobile.csv")
+	carDetails := readFile("automobile.csv")
+	workPlanner(carDetails, 20, 5)
 }
 
-func readFile(fileName string) {
+func readFile(fileName string) []carDetail {
 	fileValues, fileErr := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if fileErr != nil {
 		panic(fileErr)
 	}
 	defer fileValues.Close()
-	ArrayValues := []ArrayValue{}
+	carDetails := []carDetail{}
 
-	if fileErr := gocsv.UnmarshalFile(fileValues, &ArrayValues); fileErr != nil { // Load clients from file
+	if fileErr := gocsv.UnmarshalFile(fileValues, &carDetails); fileErr != nil { // Load clients from file
 		panic(fileErr)
 	}
-	workPlanner(ArrayValues, 20, 5)
-}
-
-//(done) Milestone 2: Create a job(logic to calculate car with max magic value)
-
-func getMagicCodes(arR []ArrayValue) {
-	defer stopWork()
-	largest = 0
-	for _, ar := range arR {
-		name = ""
-		var magicCodeInt int
-		magicCodeInt = ar.Acceleration + ar.Cylinders + ar.Displacement + ar.Horsepower + ar.Model_year + ar.Mpg + ar.Weight + len(ar.Name)
-		//get the unique character count
-		if magicCodeInt > largest {
-			largest = magicCodeInt
-			name = ar.Name
-		}
-	}
-	fmt.Printf("\n\t\t Largest of pool is %s with value : %d \n", name, largest)
+	return carDetails
 }
 
 //(done) Milestone 3: Create a workpool. Spawn n number of go routines and pass m number of records to process. Each job(routine) can calculate the max value and corresponding car name with the batch of values it processed.
 
-func workPlanner(ArrayValues []ArrayValue, spliceLength int, workerLimit int) {
+func workPlanner(ArrayValues []carDetail, spliceLength int, workerLimit int) {
 	var spliceEnd int
+	waitChan := make(chan struct{}, workerLimit)
 	for spliceHead := 0; spliceHead <= len(ArrayValues); spliceHead += spliceLength {
 		spliceEnd = spliceHead + spliceLength
 		if spliceEnd > len(ArrayValues) {
 			spliceEnd = len(ArrayValues)
 		}
 		fmt.Printf(" \n Length : %d , Head : %d, Tail : %d \n", spliceLength, spliceHead, spliceEnd)
-		startWork(workerLimit)
-		go getMagicCodes(ArrayValues[spliceHead:spliceEnd])
+		startWork(waitChan)
+		go getMagicCodes(ArrayValues[spliceHead:spliceEnd], waitChan)
 	}
 	wg.Wait()
+	fmt.Printf("\n largest of the pool is : \t %d, and the model is : \t %s \n\n", largest, name)
 }
 
-func startWork(workerLimit int) {
-	if wrkrLmt >= workerLimit {
-		time.Sleep(1 * time.Second)
-	}
-	wrkrLmt++
+func startWork(waitChan chan (struct{})) {
+	waitChan <- struct{}{}
 	wg.Add(1)
-	fmt.Println("Work added : ", wrkrLmt)
 }
 
-func stopWork() {
-	wrkrLmt--
+func stopWork(waitChan chan (struct{})) {
+	<-waitChan
 	wg.Done()
-	fmt.Println("Work done : ", wrkrLmt)
+}
+
+//(done) Milestone 2: Create a job(logic to calculate car with max magic value)
+
+func getMagicCodes(arR []carDetail, waitChan chan (struct{})) {
+	defer stopWork(waitChan)
+
+	localLargest := 0
+	var localName string
+	for _, ar := range arR {
+		var magicCodeInt int
+		//magicCodeInt = (ar.Acceleration + ar.Cylinders + ar.Displacement + ar.Horsepower + ar.Model_year + ar.Mpg + ar.Weight) * len(ar.Name)
+		magicCodeInt = len(ar.Name)
+		//get the unique character count
+		if magicCodeInt > localLargest {
+			localLargest = magicCodeInt
+			localName = ar.Name
+		}
+	}
+	checkAndUpdate(localLargest, localName)
+}
+
+func checkAndUpdate(localLargest int, localName string) {
+	largestMutex.Lock()
+	if localLargest > largest {
+		largest = localLargest
+		name = localName
+	}
+	largestMutex.Unlock()
 }
 
 //(done) Milestone 4: Wait for all jobs to complete.
 //(done) Milestone 5: Given that each job has calculated individual max magic value, find a way to get the aggregated max.
-// Milestone 6: Implement a jobs count limiter. There should be hold on max number of jobs that can run concurrently at a time.
+//(done) Milestone 6: Implement a jobs count limiter. There should be hold on max number of jobs that can run concurrently at a time.
 // Milestone 7: Make workpool related code as separate package. You can design the package such that any csv file should work (given structure definition) and any logic should work.
